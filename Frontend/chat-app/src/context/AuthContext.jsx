@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
       const { data } = await login(userData);
       setUser(data);
       setLoading(false);
+      navigate("/home");
     } catch (error) {
       console.log("something went wrong");
     } finally {

@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export const Register = () => {
+  const navigate = useNavigate();
   const { registerUser, loading } = useAuthContext();
   const [user, setUser] = useState({});
   function handleRegister(e) {
@@ -40,11 +42,14 @@ export const Register = () => {
             <button
               disabled={loading}
               type="submit"
-              className="btn btn-neutral mt-4"
+              className="btn btn-neutral bg-gray-900 mt-4"
             >
               Register
             </button>
-            <p className="flex justify-center cursor-pointer p-1">
+            <p
+              className="flex justify-center cursor-pointer p-1"
+              onClick={() => navigate("/login")}
+            >
               Already have account ? Login
             </p>
           </form>
