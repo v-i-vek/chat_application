@@ -7,3 +7,11 @@ export const login = async (data) => {
     console.log("error ", error);
   }
 };
+
+export const register = async (data) => {
+  try {
+    return await apiClient.post("/register", data);
+  } catch (error) {
+    console.log("error ", error);
+  }
+};

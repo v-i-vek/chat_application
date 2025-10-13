@@ -1,9 +1,11 @@
 import { createContext, useContext, useState } from "react";
-import { login } from "../services/auth.service";
+import { login, register } from "../services/auth.service";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const navigate = useNavigate();
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(false);
 
@@ -20,8 +22,22 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const registerUser = async (userData) => {
+    try {
+      setLoading(true);
+      const { data } = await register(userData);
+      setUser(data);
+      setLoading(false);
+      navigate("/login");
+    } catch (error) {
+      console.log("something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ loginUser, loading }}>
+    <AuthContext.Provider value={{ loginUser, registerUser, loading }}>
       {children}
     </AuthContext.Provider>
   );

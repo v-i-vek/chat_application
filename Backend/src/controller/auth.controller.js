@@ -19,7 +19,8 @@ export const registerUser = async (req, res) => {
     }
 
     const result = await userModel.create({ name, email, password });
-    res.status(200).json({
+    delete result["password"];
+    res.status(201).json({
       success: "success",
       message: "user created successfully",
       data: result,

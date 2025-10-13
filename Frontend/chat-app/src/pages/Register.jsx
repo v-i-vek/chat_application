@@ -1,21 +1,26 @@
 import React, { useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
 
-export const Login = () => {
-  const { loginUser, loading } = useAuthContext();
+export const Register = () => {
+  const { registerUser, loading } = useAuthContext();
   const [user, setUser] = useState({});
-
-  function handleLogin(e) {
+  function handleRegister(e) {
     e.preventDefault();
-    console.log("user", user);
-    loginUser(user);
+    registerUser(user);
   }
   return (
     <>
       <div className="flex justify-center h-[100%] mt-[150px] items-center ">
         <fieldset className="fieldset bg-base-200 border-base-300 shadow-xl/30 rounded-box w-xs border p-4">
-          <div className="text-2xl text-center">welcome back!!</div>
-          <form className="flex flex-col" onSubmit={handleLogin}>
+          <div className="text-2xl text-center">Create new Account!!</div>
+          <form className="flex flex-col" onSubmit={handleRegister}>
+            <label className="label">Name</label>
+            <input
+              type="text"
+              className="input"
+              placeholder="name"
+              onChange={(e) => setUser({ ...user, name: e.target.value })}
+            />
             <label className="label">Email</label>
             <input
               type="email"
@@ -37,10 +42,10 @@ export const Login = () => {
               type="submit"
               className="btn btn-neutral mt-4"
             >
-              Login
+              Register
             </button>
             <p className="flex justify-center cursor-pointer p-1">
-              Don't have accound ? create Account
+              Already have account ? Login
             </p>
           </form>
         </fieldset>
