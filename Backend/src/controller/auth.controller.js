@@ -1,5 +1,5 @@
+import { generateJWTtoken } from "../middleware/generateToken.js";
 import { userModel } from "../model/user.js";
-import bcrypt from "bcrypt";
 export const registerUser = async (req, res) => {
   try {
     let { name, email, password } = req.body;
@@ -17,7 +17,6 @@ export const registerUser = async (req, res) => {
         .json({ success: "success", message: "Email Id already exist" });
       return;
     }
-    password = await bcrypt.hash(password.toString(), 10);
 
     const result = await userModel.create({ name, email, password });
     res.status(200).json({
@@ -38,7 +37,15 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const checkUserExist = userModel.findOne({ email });
+    if (password.length < 5 || !password || !email) {
+      res.status(400).json({
+        success: "failed",
+        message: "incorrect email or password",
+      });
+      return;
+    }
+
+    const checkUserExist = await userModel.findOne({ email });
     if (!checkUserExist) {
       res
         .status(400)
@@ -46,12 +53,29 @@ export const login = async (req, res) => {
       return;
     }
 
-    const result = userModel.create({ userName, email, password });
+    const checkPassword = await checkUserExist.comparePassword(password);
+    if (!checkPassword) {
+      res
+        .status(400)
+        .json({ success: "failed", message: "incorrect email or password" });
+    }
+
+    const token = await generateJWTtoken(checkUserExist);
+    res.cookie("jwt", token, {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "development" ? false : true,
+    });
     res.status(200).json({
       success: "success",
-      message: "user created successfully",
-      data: result,
+      data: {
+        id: checkUserExist._id,
+        email: checkUserExist.email,
+        name: checkUserExist.name,
+      },
     });
+
     return;
   } catch (error) {
     console.log(error);
