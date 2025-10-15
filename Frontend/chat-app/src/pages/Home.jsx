@@ -3,11 +3,15 @@ import { ContactCard } from "../component/ContactCard";
 import { ChatBox } from "../component/ChatBox";
 import { useMsgContext } from "../context/MessageContext";
 import { MessageInput } from "../component/MessageInput";
+import { socket } from "../services/SocketClient";
 
 const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 12, 32, 34, 54, 65, 77, 43];
 export const Home = () => {
   const { message, setMessage } = useMsgContext();
   const messagesEndRef = useRef(null);
+
+  const sockets = socket;
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [message]);

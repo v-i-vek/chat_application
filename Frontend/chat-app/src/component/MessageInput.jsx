@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { useMsgContext } from "../context/MessageContext";
+import { socket } from "../services/SocketClient";
 
 export const MessageInput = () => {
   const { message, setMessage } = useMsgContext();
+
+  const socketClient = socket;
+
   const [text, setText] = useState({
     id: "68ebd91b797d2bd22794f315",
     text: "",
@@ -10,6 +14,7 @@ export const MessageInput = () => {
   function handleSendMsg(e) {
     e.preventDefault();
     if (!text.text.trim()) return;
+    socketClient.emit("message", text.text);
     setMessage([...message, text]);
     setText({
       id: "68ebd91b797d2bd22794f315", // keep or regenerate id if needed
