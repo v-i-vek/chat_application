@@ -7,7 +7,7 @@ export const getAllContacts = async (req, res) => {
     const filterUsers = await userModel
       .find({ _id: { $ne: loggedInUser } })
       .select("-password");
-    res.status(200).json({ success: "success", filterUsers });
+    res.status(200).json({ success: "success", data: filterUsers });
   } catch (error) {
     console.log("Error in getAllContacts:", error);
     res.status(500).json({ message: "internal server error" });

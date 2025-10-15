@@ -1,4 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
+import apiClient from "../services/ApiClient";
+import { getAllContacts } from "../services/Message";
 
 const MessageContext = createContext();
 
@@ -21,8 +23,27 @@ export const MessageProvider = ({ children }) => {
     },
   ]);
 
+  const [msgLoading, setMsgLoading] = useState(false);
+  const [contacts, setContacts] = useState();
+
+  const getContacts = useCallback(async () => {
+    try {
+      setMsgLoading(true);
+      const { data } = await getAllContacts();
+      if (data.data) {
+        setContacts(data.data);
+      }
+    } catch (error) {
+      console.log("❌ Registration failed", error);
+    } finally {
+      setMsgLoading(false);
+    }
+  }, []);
+
   return (
-    <MessageContext.Provider value={{ message, setMessage }}>
+    <MessageContext.Provider
+      value={{ message, setMessage, getContacts, contacts, msgLoading }}
+    >
       {children}
     </MessageContext.Provider>
   );

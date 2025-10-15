@@ -3,8 +3,6 @@ import React from "react";
 const loginUser = "68ebd91b797d2bd22794f315";
 const receiver = "68ec90dc764b42a51dc019ca";
 export const ChatBox = ({ message }) => {
-  console.log("messages", message);
-
   if (!message) return <p>no data found</p>;
 
   return (
