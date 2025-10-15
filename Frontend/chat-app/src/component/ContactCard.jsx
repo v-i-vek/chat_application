@@ -4,7 +4,7 @@ export const ContactCard = () => {
   const user = "offline";
   return (
     <>
-      <div className="flex bg-gray-800 shadow-lg shadow-gray-9 m-1 rounded-l-full rounded-r-lg transition duration-300 ease-in-out hover:scale-105 hover:opacity-90 w-full overflow-hidden  ">
+      <div className="flex p-4 bg-gray-800 shadow-lg shadow-gray-9 m-1 rounded-l-full rounded-r-lg transition duration-300 ease-in-out hover:scale-105 hover:opacity-90 w-full overflow-hidden  ">
         <div className="flex">
           <div
             className={`avatar ${

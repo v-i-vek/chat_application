@@ -15,3 +15,10 @@ export const register = async (data) => {
     console.log("error ", error);
   }
 };
+export const checkUser = async () => {
+  try {
+    return await apiClient.get("/check-user");
+  } catch (error) {
+    console.log("error", error);
+  }
+};

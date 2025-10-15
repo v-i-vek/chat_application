@@ -1,50 +1,82 @@
-import { createContext, useContext, useState } from "react";
-import { login, register } from "../services/auth.service";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+} from "react";
+import { checkUser, login, register } from "../services/auth.service";
 import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
-  const [user, setUser] = useState();
-  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  const didCheckRef = useRef(false);
 
+  const [loading, setLoading] = useState(true); // start as true for initial check
+
+  // 🔹 LOGIN
   const loginUser = async (userData) => {
     try {
       setLoading(true);
       const { data } = await login(userData);
-      setUser(data);
-      setLoading(false);
+      setUser(data.data);
       navigate("/home");
     } catch (error) {
-      console.log("something went wrong");
+      console.log("❌ Login failed", error);
     } finally {
       setLoading(false);
     }
   };
 
+  // 🔹 REGISTER
   const registerUser = async (userData) => {
     try {
       setLoading(true);
-      const { data } = await register(userData);
-      setUser(data);
-      setLoading(false);
+      await register(userData);
       navigate("/login");
     } catch (error) {
-      console.log("something went wrong");
+      console.log("❌ Registration failed", error);
     } finally {
       setLoading(false);
     }
   };
 
+  // 🔹 CHECK USER (validate token/session)
+  const isValidUser = useCallback(async () => {
+    try {
+      const { data } = await checkUser();
+      if (data?.data) {
+        setUser(data.data);
+      } else {
+        setUser(null);
+        navigate("/login");
+      }
+    } catch (error) {
+      console.log("⚠️ User validation failed:", error);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // 🔹 Run once on mount to restore session
+  useEffect(() => {
+    if (didCheckRef.current) return; // 🛑 prevents multiple calls
+    didCheckRef.current = true;
+    isValidUser();
+  }, [isValidUser]);
+
   return (
-    <AuthContext.Provider value={{ loginUser, registerUser, loading }}>
+    <AuthContext.Provider
+      value={{ loginUser, registerUser, user, isValidUser, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuthContext = () => {
-  const context = useContext(AuthContext);
-  return context;
-};
+export const useAuthContext = () => useContext(AuthContext);
