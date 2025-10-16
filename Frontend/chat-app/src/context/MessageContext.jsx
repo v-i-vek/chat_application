@@ -1,6 +1,14 @@
-import { createContext, useCallback, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import apiClient from "../services/ApiClient";
 import * as messageService from "../services/Message";
+import { useAuthContext } from "./AuthContext";
+import { socket } from "../services/SocketClient";
 
 const MessageContext = createContext();
 
@@ -11,18 +19,19 @@ const MessageContext = createContext();
 // }
 
 export const MessageProvider = ({ children }) => {
-  const [message, setMessage] = useState([
-    {
-      id: "fasfsafasfas",
-      text: "hi ",
-      // time: Date.now(),
-    },
-    {
-      id: "68ebd91b797d2bd22794f315",
-      text: "hello",
-    },
-  ]);
+  const { user } = useAuthContext();
 
+  useEffect(() => {
+    socket.off("receiveMessage");
+    socket.on("receiveMessage", (data) => {
+      setMessage((prev) => [...prev, data]);
+
+      return () => socket.off("receiveMessage");
+    });
+  }, [user?.id]);
+
+  const [message, setMessage] = useState([]);
+  const [receiverId, setReceiverId] = useState();
   const [msgLoading, setMsgLoading] = useState(false);
   const [contacts, setContacts] = useState();
 
@@ -43,6 +52,7 @@ export const MessageProvider = ({ children }) => {
   const getUserMsgById = async (id) => {
     try {
       setMsgLoading(true);
+      setReceiverId(id);
       const { data } = await messageService.getUserMsgById(id);
       if (data?.data?.length > 0) {
         setMessage(data.data);
@@ -66,6 +76,7 @@ export const MessageProvider = ({ children }) => {
         contacts,
         msgLoading,
         getUserMsgById,
+        receiverId,
       }}
     >
       {children}

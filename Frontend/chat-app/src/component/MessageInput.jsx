@@ -1,21 +1,31 @@
 import React, { useState } from "react";
 import { useMsgContext } from "../context/MessageContext";
 import { socket } from "../services/SocketClient";
+import { useAuthContext } from "../context/AuthContext";
 
 export const MessageInput = () => {
-  const { message, setMessage } = useMsgContext();
-
+  const { message, setMessage, receiverId } = useMsgContext();
+  const { user } = useAuthContext();
   const [text, setText] = useState({
-    id: "68ebd91b797d2bd22794f315",
+    senderId: user.id,
     text: "",
+    receiverId: "",
   });
   function handleSendMsg(e) {
     e.preventDefault();
     if (!text.text.trim()) return;
-    socket.emit("message", text.text);
-    setMessage([...message, text]);
+
+    const newMessage = {
+      senderId: user.id,
+      receiverId,
+      text: text.text,
+    };
+
+    socket.emit("sendMessage", newMessage);
+
+    setMessage((prev) => [...prev, newMessage]);
     setText({
-      id: "68ebd91b797d2bd22794f315", // keep or regenerate id if needed
+      senderId: user.id, // keep or regenerate id if needed
       text: "",
     });
   }
@@ -28,7 +38,9 @@ export const MessageInput = () => {
             className="input w-full "
             placeholder="My awesome page"
             value={text.text}
-            onChange={(e) => setText({ ...text, text: e.target.value })}
+            onChange={(e) =>
+              setText({ ...text, receiverId: receiverId, text: e.target.value })
+            }
           />
         </fieldset>
       </form>

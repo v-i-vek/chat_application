@@ -1,5 +1,6 @@
 import { MessageModel } from "../model/message.js";
 import { userModel } from "../model/user.js";
+import { io } from "../socket.js";
 
 export const getAllContacts = async (req, res) => {
   try {
@@ -76,4 +77,36 @@ export const sendMessage = async (req, res) => {
 export const getChatPartners = async (req, res) => {
   try {
   } catch (error) {}
+};
+
+export const addMSGBySocket = async (data) => {
+  try {
+    const { text } = req.body;
+    const file = req.file;
+    const { id: receiverId } = req.params;
+    const senderId = req.conUser.id;
+
+    if (!file && !text) {
+      return res.status(400).json({ message: "Text or image is required." });
+    }
+    if (senderId == receiverId) {
+      return res
+        .status(400)
+        .json({ message: "Cannot send messages to yourself." });
+    }
+    const receiverExists = await userModel.exists({ _id: receiverId });
+    if (!receiverExists) {
+      return res.status(404).json({ message: "Receiver not found." });
+    }
+    const newMessage = await MessageModel.create({
+      senderId,
+      receiverId,
+      text,
+    });
+
+    res.status(201).json(newMessage);
+  } catch (error) {
+    console.log("Error in sendMessage controller: ", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };

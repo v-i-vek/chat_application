@@ -14,7 +14,7 @@ export const Home = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [message]);
   useEffect(() => {
-    socket.on("getOnlineUsers", (data) => {
+    socket.on("onlineUsers", (data) => {
       console.log("data====", data);
     });
     getAllContacts();
