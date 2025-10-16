@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema(
       ref: "Users",
       required: true, // ✅ use `required`, not `require`
     },
-    recieverId: {
+    receiverId: {
       type: mongoose.Types.ObjectId,
       ref: "Users",
       required: true,

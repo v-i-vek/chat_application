@@ -26,7 +26,7 @@ io.on("connection", (socket) => {
 
   // on disconnection we will update the list of the user which are online except the current user which is disconnected.
   socket.on("disconnect", () => {
-    console.log("A user disconnected", socket.user.fullName);
+    console.log("A user disconnected", socket.user);
     delete userSocketMap[userId];
     socket.emit("getOnlineUsers", Object.keys(userSocketMap));
   });

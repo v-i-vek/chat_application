@@ -25,7 +25,17 @@ export const getMessagesByUserId = async (req, res) => {
       ],
     });
 
-    res.status(200).json(messages);
+    if (messages.length > 0) {
+      res.status(200).json({
+        success: "success",
+        data: messages,
+      });
+    } else {
+      res.status(204).json({
+        success: "success",
+        data: "no messages found",
+      });
+    }
   } catch (error) {
     console.log("Error in getMessages controller: ", error.message);
     res.status(500).json({ error: "Internal server error" });
@@ -37,12 +47,12 @@ export const sendMessage = async (req, res) => {
     const { text } = req.body;
     const file = req.file;
     const { id: receiverId } = req.params;
-    const senderId = req.user._id;
+    const senderId = req.conUser.id;
 
     if (!file && !text) {
       return res.status(400).json({ message: "Text or image is required." });
     }
-    if (senderId.equals(receiverId)) {
+    if (senderId == receiverId) {
       return res
         .status(400)
         .json({ message: "Cannot send messages to yourself." });
@@ -55,12 +65,11 @@ export const sendMessage = async (req, res) => {
       senderId,
       receiverId,
       text,
-      image: imageUrl,
     });
 
     res.status(201).json(newMessage);
   } catch (error) {
-    console.log("Error in sendMessage controller: ", error.message);
+    console.log("Error in sendMessage controller: ", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

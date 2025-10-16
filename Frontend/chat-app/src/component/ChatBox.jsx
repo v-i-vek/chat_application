@@ -1,13 +1,14 @@
 import React from "react";
+import { useAuthContext } from "../context/AuthContext";
 
-const loginUser = "68ebd91b797d2bd22794f315";
-const receiver = "68ec90dc764b42a51dc019ca";
 export const ChatBox = ({ message }) => {
-  if (!message) return <p>no data found</p>;
+  const { user, loading } = useAuthContext();
 
+  if (!message) return <p>no data found</p>;
+  if (loading) return <P>loading!!!</P>;
   return (
     <>
-      {message.id !== loginUser ? (
+      {message.senderId != user.id ? (
         <div className="chat chat-start">
           <div className="chat-bubble">{message.text}</div>
         </div>

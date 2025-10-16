@@ -3,9 +3,10 @@ import { ContactCard } from "../component/ContactCard";
 import { ChatBox } from "../component/ChatBox";
 import { useMsgContext } from "../context/MessageContext";
 import { MessageInput } from "../component/MessageInput";
+import { socket } from "../services/SocketClient";
 
 export const Home = () => {
-  const { message, setMessage, getContacts, msgLoading, contacts } =
+  const { message, setMessage, getAllContacts, msgLoading, contacts } =
     useMsgContext();
   const messagesEndRef = useRef(null);
 
@@ -13,7 +14,10 @@ export const Home = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [message]);
   useEffect(() => {
-    getContacts();
+    socket.on("getOnlineUsers", (data) => {
+      console.log("data====", data);
+    });
+    getAllContacts();
   }, []);
   if (msgLoading) return <p>loading !!!</p>;
   return (
@@ -21,8 +25,8 @@ export const Home = () => {
       <div className="flex p-5 m-5 w-[75%] mx-auto h-[90vh]">
         <div className="flex w-[25%] border-1  flex-col overflow-auto  p-4 overflow-y-auto scroll-smooth">
           {contacts?.length > 0 ? (
-            contacts?.map((item) => (
-              <ContactCard key={item.id} name={item.name} />
+            contacts?.map((item, index) => (
+              <ContactCard key={index} userDetail={item} />
             ))
           ) : (
             <p>no user found</p>
@@ -31,7 +35,10 @@ export const Home = () => {
         <div className="flex w-full  flex-col">
           <div className="w-full border-t flex grow flex-col overflow-y-auto scroll-smooth justify-end-safe p-3 ">
             {message.length > 0 &&
-              message.map((item) => <ChatBox key={item.id} message={item} />)}
+              message.map((item, index) => (
+                <ChatBox key={index} message={item} />
+              ))}
+
             <div ref={messagesEndRef} />
           </div>
           <div className="">

@@ -13,9 +13,6 @@ export const MessageInput = () => {
     e.preventDefault();
     if (!text.text.trim()) return;
     socket.emit("message", text.text);
-    socket.on("getOnlineUsers", (msg) => {
-      console.log("00000", msg);
-    });
     setMessage([...message, text]);
     setText({
       id: "68ebd91b797d2bd22794f315", // keep or regenerate id if needed

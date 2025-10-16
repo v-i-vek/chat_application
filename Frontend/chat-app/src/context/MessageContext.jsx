@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useState } from "react";
 import apiClient from "../services/ApiClient";
-import { getAllContacts } from "../services/Message";
+import * as messageService from "../services/Message";
 
 const MessageContext = createContext();
 
@@ -26,10 +26,10 @@ export const MessageProvider = ({ children }) => {
   const [msgLoading, setMsgLoading] = useState(false);
   const [contacts, setContacts] = useState();
 
-  const getContacts = useCallback(async () => {
+  const getAllContacts = useCallback(async () => {
     try {
       setMsgLoading(true);
-      const { data } = await getAllContacts();
+      const { data } = await messageService.getAllContacts();
       if (data.data) {
         setContacts(data.data);
       }
@@ -40,9 +40,33 @@ export const MessageProvider = ({ children }) => {
     }
   }, []);
 
+  const getUserMsgById = async (id) => {
+    try {
+      setMsgLoading(true);
+      const { data } = await messageService.getUserMsgById(id);
+      if (data?.data?.length > 0) {
+        setMessage(data.data);
+      } else {
+        setMessage("");
+      }
+    } catch (error) {
+      console.log(error);
+      setMessage("");
+    } finally {
+      setMsgLoading(false);
+    }
+  };
+
   return (
     <MessageContext.Provider
-      value={{ message, setMessage, getContacts, contacts, msgLoading }}
+      value={{
+        message,
+        setMessage,
+        getAllContacts,
+        contacts,
+        msgLoading,
+        getUserMsgById,
+      }}
     >
       {children}
     </MessageContext.Provider>
