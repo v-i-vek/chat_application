@@ -24,7 +24,7 @@ export const getMessagesByUserId = async (req, res) => {
         { senderId: authUser, receiverId: id },
         { senderId: id, receiverId: authUser },
       ],
-    });
+    }).sort({ createdAt: 1 });
 
     if (messages.length > 0) {
       res.status(200).json({

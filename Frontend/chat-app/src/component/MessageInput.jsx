@@ -9,7 +9,6 @@ export const MessageInput = () => {
   const [text, setText] = useState({
     senderId: user.id,
     text: "",
-    receiverId: "",
   });
   function handleSendMsg(e) {
     e.preventDefault();
@@ -19,6 +18,7 @@ export const MessageInput = () => {
       senderId: user.id,
       receiverId,
       text: text.text,
+      createdAt: Date.now(),
     };
 
     socket.emit("sendMessage", newMessage);
@@ -39,7 +39,10 @@ export const MessageInput = () => {
             placeholder="My awesome page"
             value={text.text}
             onChange={(e) =>
-              setText({ ...text, receiverId: receiverId, text: e.target.value })
+              setText({
+                ...text,
+                text: e.target.value,
+              })
             }
           />
         </fieldset>

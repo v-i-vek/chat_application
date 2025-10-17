@@ -3,6 +3,7 @@ import { Server } from "socket.io";
 import express from "express";
 
 import { validateConnectedUser } from "./middleware/socket.validate.js";
+import { cacheMessage } from "./service/cache.service.js";
 
 const app = express();
 
@@ -24,15 +25,12 @@ io.on("connection", (socket) => {
   // socket.emit will only sends the message to the connected user other than the current connected user i.e. the user which is just connected.
   socket.emit("onlineUsers", Object.keys(userSocketMap));
 
-  socket.on("sendMessage", ({ senderId, receiverId, text }) => {
-    console.log("Message received:", senderId, "→", receiverId, text);
-    const receiverSocketId = getSocketIdByUserId(receiverId);
+  socket.on("sendMessage", async (msg) => {
+    console.log("Message received:", msg.senderId, "→", msg.receiverId);
+    const receiverSocketId = getSocketIdByUserId(msg.receiverId);
     if (receiverSocketId) {
-      io.to(receiverSocketId).emit("receiveMessage", {
-        senderId,
-        receiverId,
-        text,
-      });
+      io.to(receiverSocketId).emit("receiveMessage", msg);
+      await cacheMessage(msg);
     }
   });
 
