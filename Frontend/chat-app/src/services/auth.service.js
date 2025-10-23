@@ -22,3 +22,11 @@ export const checkUser = async () => {
     console.log("error", error);
   }
 };
+
+export const logout = async () => {
+  try {
+    return await apiClient.post("/logout");
+  } catch (error) {
+    console.log("error", error);
+  }
+};

@@ -8,6 +8,7 @@ import { Register } from "./pages/Register";
 import { Home } from "./pages/Home";
 import { PrivateRoute } from "./routes/Private.route";
 import { PublicRoute } from "./routes/Public.route";
+import { NavBar } from "./component/NavBar";
 
 function App() {
   return (

@@ -6,7 +6,7 @@ import {
   useState,
   useRef,
 } from "react";
-import { checkUser, login, register } from "../services/auth.service";
+import { checkUser, login, logout, register } from "../services/auth.service";
 import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
@@ -63,6 +63,22 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  // LOGOUT
+
+  const logoutUser = async () => {
+    try {
+      setLoading(true);
+      const data = await logout();
+      if (data) {
+        setUser(null);
+        navigate("/login");
+      }
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // 🔹 Run once on mount to restore session
   useEffect(() => {
     if (didCheckRef.current) return; // 🛑 prevents multiple calls
@@ -72,7 +88,14 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ loginUser, registerUser, user, isValidUser, loading }}
+      value={{
+        loginUser,
+        registerUser,
+        user,
+        isValidUser,
+        loading,
+        logoutUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

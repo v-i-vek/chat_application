@@ -5,6 +5,7 @@ import { useMsgContext } from "../context/MessageContext";
 import { MessageInput } from "../component/MessageInput";
 import { socket } from "../services/SocketClient";
 import { useAuthContext } from "../context/AuthContext";
+import { NavBar } from "../component/NavBar";
 
 export const Home = () => {
   const {
@@ -31,6 +32,7 @@ export const Home = () => {
   if (msgLoading) return <p>loading !!!</p>;
   return (
     <>
+      <NavBar />
       <div className="flex p-5 m-5 w-[75%] mx-auto h-[90vh]">
         <div className="flex w-[25%] border-1  flex-col overflow-auto   overflow-y-auto scroll-smooth">
           <div className="flex bg-gray-400 border-1  w-full ">
