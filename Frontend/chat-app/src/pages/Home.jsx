@@ -28,14 +28,13 @@ export const Home = () => {
     getAllContacts();
   }, []);
 
-  console.log("receiverData===", receiverData);
   if (msgLoading) return <p>loading !!!</p>;
   return (
     <>
       <div className="flex p-5 m-5 w-[75%] mx-auto h-[90vh]">
-        <div className="flex w-[25%] border-1  flex-col overflow-auto  p-4 overflow-y-auto scroll-smooth">
-          <div className="flex bg-gray-400 border-1 rounded-lg ">
-            <div className="">
+        <div className="flex w-[25%] border-1  flex-col overflow-auto   overflow-y-auto scroll-smooth">
+          <div className="flex bg-gray-400 border-1  w-full ">
+            <div>
               <img
                 className="w-15 rounded-full"
                 src="https://img.daisyui.com/images/profile/demo/1@94.webp"
@@ -44,13 +43,15 @@ export const Home = () => {
             </div>
             <div className="p-3">{user?.name}</div>
           </div>
-          {contacts?.length > 0 ? (
-            contacts?.map((item, index) => (
-              <ContactCard key={index} userDetail={item} />
-            ))
-          ) : (
-            <p>no user found</p>
-          )}
+          <div className="flex flex-col w-full p-4 h-full ">
+            {contacts?.length > 0 ? (
+              contacts?.map((item, index) => (
+                <ContactCard key={index} userDetail={item} />
+              ))
+            ) : (
+              <p>no user found</p>
+            )}
+          </div>
         </div>
         <div className="flex w-full  flex-col">
           <div className="flex border-t-1 p-3 ">

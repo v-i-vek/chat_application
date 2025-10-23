@@ -30,7 +30,7 @@ export const ContactCard = ({ userDetail }) => {
               user == "online" ? "avatar-online" : "avatar-offline"
             }`}
           >
-            <div className="w-15 h-15 rounded-full">
+            <div className="w-10 h-10 rounded-full">
               <img
                 src="https://img.daisyui.com/images/profile/demo/gordon@192.webp"
                 alt=""
@@ -39,7 +39,7 @@ export const ContactCard = ({ userDetail }) => {
           </div>
         </div>
 
-        <div className="flex flex-col ml-3 my-4">
+        <div className="flex flex-col ml-3 my-4 justify-center">
           <p>{userDetail?.name}</p>
         </div>
       </div>
