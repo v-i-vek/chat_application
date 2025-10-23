@@ -32,6 +32,7 @@ export const MessageProvider = ({ children }) => {
 
   const [message, setMessage] = useState([]);
   const [receiverId, setReceiverId] = useState();
+  const [receiverData, setReceiverData] = useState();
   const [msgLoading, setMsgLoading] = useState(false);
   const [contacts, setContacts] = useState();
 
@@ -77,6 +78,8 @@ export const MessageProvider = ({ children }) => {
         msgLoading,
         getUserMsgById,
         receiverId,
+        setReceiverData,
+        receiverData,
       }}
     >
       {children}
