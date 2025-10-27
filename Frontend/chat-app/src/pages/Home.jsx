@@ -39,7 +39,7 @@ export const Home = () => {
             <div>
               <img
                 className="w-15 rounded-full"
-                src="https://img.daisyui.com/images/profile/demo/1@94.webp"
+                src="https://img.daisyui.com/images/profile/demo/anakeen@192.webp"
                 alt=""
               />
             </div>
@@ -47,8 +47,8 @@ export const Home = () => {
           </div>
           <div className="flex flex-col w-full p-4 h-full ">
             {contacts?.length > 0 ? (
-              contacts?.map((item, index) => (
-                <ContactCard key={index} userDetail={item} />
+              contacts?.map((item) => (
+                <ContactCard key={item._id} userDetail={item} />
               ))
             ) : (
               <p>no user found</p>
@@ -75,9 +75,12 @@ export const Home = () => {
           </div>
           <div className="w-full border-t flex grow flex-col overflow-y-auto scroll-smooth justify-end-safe p-3 ">
             {message.length > 0 &&
-              message.map((item, index) => (
-                <ChatBox key={index} message={item} />
-              ))}
+              message.map(
+                (
+                  item,
+                  index // Using index here is okay if messages are only appended
+                ) => <ChatBox key={item.id || index} message={item} />
+              )}
 
             <div ref={messagesEndRef} />
           </div>

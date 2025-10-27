@@ -19,17 +19,27 @@ export const getMessagesByUserId = async (req, res) => {
   try {
     const authUser = req.conUser.id;
     const { id } = req.params;
+    let { page = 1, limit = 20 } = req.query;
+    page = parseInt(page);
+    limit = parseInt(limit);
+
+    // calculate how many docs to skip
+    const skip = (page - 1) * limit;
+
     const messages = await MessageModel.find({
       $or: [
         { senderId: authUser, receiverId: id },
         { senderId: id, receiverId: authUser },
       ],
-    }).sort({ createdAt: 1 });
+    })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     if (messages.length > 0) {
       res.status(200).json({
         success: "success",
-        data: messages,
+        data: messages.reverse(),
       });
     } else {
       res.status(204).json({

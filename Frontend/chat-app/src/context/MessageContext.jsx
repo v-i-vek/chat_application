@@ -22,12 +22,12 @@ export const MessageProvider = ({ children }) => {
   const { user } = useAuthContext();
 
   useEffect(() => {
-    socket.off("receiveMessage");
-    socket.on("receiveMessage", (data) => {
+    const handleReceiveMessage = (data) => {
       setMessage((prev) => [...prev, data]);
+    };
 
-      return () => socket.off("receiveMessage");
-    });
+    socket.on("receiveMessage", handleReceiveMessage);
+    return () => socket.off("receiveMessage", handleReceiveMessage);
   }, [user?.id]);
 
   const [message, setMessage] = useState([]);

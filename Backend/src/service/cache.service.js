@@ -9,7 +9,7 @@ export const cacheMessage = async (message) => {
     const redis = await redisClient();
     const cacheSize = await redis.lLen(BUFFER_KEY);
     const addCache = await redis.lPush(BUFFER_KEY, JSON.stringify(message));
-    if (cacheSize > 10) {
+    if (cacheSize > 2) {
       // write the logic to save the data in db
       const cacheData = await redis.lRange(BUFFER_KEY, 0, -1);
       await flushDataInDb(cacheData);
