@@ -8,9 +8,9 @@ export const getAllContacts = async () => {
   }
 };
 
-export const getUserMsgById = async (id) => {
+export const getUserMsgById = async (id, page, limit) => {
   try {
-    return await apiClient.get(`/message/${id}`);
+    return await apiClient.get(`/message/${id}`, { params: { page, limit } });
   } catch (error) {
     console.log("error ", error);
   }

@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import apiClient from "../services/ApiClient";
@@ -11,12 +12,6 @@ import { useAuthContext } from "./AuthContext";
 import { socket } from "../services/SocketClient";
 
 const MessageContext = createContext();
-
-// message={
-//     id:"fasfsafasfas",
-//     text:"hi ",
-//     time:Date.now()
-// }
 
 export const MessageProvider = ({ children }) => {
   const { user } = useAuthContext();
@@ -35,6 +30,10 @@ export const MessageProvider = ({ children }) => {
   const [receiverData, setReceiverData] = useState();
   const [msgLoading, setMsgLoading] = useState(false);
   const [contacts, setContacts] = useState();
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const isFetchingRef = useRef(false);
+  const chatContainerRef = useRef(null);
 
   const getAllContacts = useCallback(async () => {
     try {
@@ -50,21 +49,49 @@ export const MessageProvider = ({ children }) => {
     }
   }, []);
 
-  const getUserMsgById = async (id) => {
+  const getUserMsgById = async (id, page = 1, limit = 20) => {
     try {
       setMsgLoading(true);
       setReceiverId(id);
-      const { data } = await messageService.getUserMsgById(id);
+      const { data } = await messageService.getUserMsgById(id, page, limit);
       if (data?.data?.length > 0) {
-        setMessage(data.data);
+        setMessage((p) => [...data.data, ...p]);
       } else {
-        setMessage("");
+        setMessage([]);
       }
+      return data;
     } catch (error) {
       console.log(error);
-      setMessage("");
+      setMessage([]);
     } finally {
       setMsgLoading(false);
+    }
+  };
+
+  const handleScroll = async (id) => {
+    console.log("called");
+    const container = chatContainerRef.current;
+    if (!container || isFetchingRef.current || !hasMore) return;
+    //when scrolled at top
+    if (container.scrollTop < 800) {
+      isFetchingRef.current = true;
+      const prevScrollHeight = container.scrollHeight;
+      try {
+        const moreMessages = await getUserMsgById(id, page + 1);
+        console.log(moreMessages);
+        if (moreMessages.data.length > 0) {
+          setPage((p) => p + 1);
+          setTimeout(() => {
+            container.scrollTop = container.scrollHeight - prevScrollHeight;
+          }, 0);
+        } else {
+          setHasMore(false);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        isFetchingRef.current = false;
+      }
     }
   };
 
@@ -80,6 +107,8 @@ export const MessageProvider = ({ children }) => {
         receiverId,
         setReceiverData,
         receiverData,
+        chatContainerRef,
+        handleScroll,
       }}
     >
       {children}

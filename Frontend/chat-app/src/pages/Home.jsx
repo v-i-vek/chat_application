@@ -15,6 +15,9 @@ export const Home = () => {
     msgLoading,
     contacts,
     receiverData,
+    chatContainerRef,
+    handleScroll,
+    receiverId,
   } = useMsgContext();
 
   const { user } = useAuthContext();
@@ -25,6 +28,7 @@ export const Home = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [message]);
   useEffect(() => {
+    receiverId;
     socket.on("onlineUsers", (data) => {});
     getAllContacts();
   }, []);
@@ -73,16 +77,15 @@ export const Home = () => {
               </p>
             </div>
           </div>
-          <div className="w-full border-t flex grow flex-col overflow-y-auto scroll-smooth justify-end-safe p-3 ">
-            {message.length > 0 &&
-              message.map(
-                (
-                  item,
-                  index // Using index here is okay if messages are only appended
-                ) => <ChatBox key={item.id || index} message={item} />
-              )}
-
-            <div ref={messagesEndRef} />
+          <div
+            ref={chatContainerRef}
+            onScroll={() => handleScroll(receiverId)}
+            className="w-full border-t flex grow flex-col overflow-y-auto scroll-smooth justify-end-safe p-3"
+          >
+            {message?.map((item, index) => (
+              <ChatBox key={item.id || index} message={item} />
+            ))}
+            <div ref={messagesEndRef} /> {/* keep this for auto-scroll */}
           </div>
           <div>
             <MessageInput />
