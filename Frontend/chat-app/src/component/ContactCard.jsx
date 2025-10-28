@@ -2,15 +2,17 @@ import React from "react";
 import { useMsgContext } from "../context/MessageContext";
 
 export const ContactCard = ({ userDetail }) => {
-  const { getUserMsgById, setReceiverData, receiverData, receiverId } =
-    useMsgContext();
+  const {
+    getUserMsgById,
+    setReceiverData,
+    receiverData,
+    receiverId,
+    openChat,
+  } = useMsgContext();
 
   const user = "offline";
   function hanldeContactDetail(data) {
-    // 1 call the api to get all the message related to selected user and the authenticated user.\
-    // 2 after successfully completion of the step 1 create the limit or pagination
-    getUserMsgById(data._id);
-    setReceiverData(data);
+    openChat(data);
   }
 
   const isSelected = receiverId === userDetail?._id;

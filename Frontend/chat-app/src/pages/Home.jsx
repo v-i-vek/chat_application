@@ -18,6 +18,9 @@ export const Home = () => {
     chatContainerRef,
     handleScroll,
     receiverId,
+    noMsg,
+    page,
+    contactLoading,
   } = useMsgContext();
 
   const { user } = useAuthContext();
@@ -25,15 +28,17 @@ export const Home = () => {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [message]);
+    if (page === 1 && message?.length) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [message, page]);
   useEffect(() => {
     receiverId;
     socket.on("onlineUsers", (data) => {});
     getAllContacts();
   }, []);
 
-  if (msgLoading) return <p>loading !!!</p>;
+  if (contactLoading) return <p>loading !!!</p>;
   return (
     <>
       <NavBar />
@@ -82,10 +87,14 @@ export const Home = () => {
             onScroll={() => handleScroll(receiverId)}
             className="w-full border-t flex grow flex-col overflow-y-auto scroll-smooth justify-end-safe p-3"
           >
-            {message?.map((item, index) => (
-              <ChatBox key={item.id || index} message={item} />
-            ))}
-            <div ref={messagesEndRef} /> {/* keep this for auto-scroll */}
+            {noMsg ? (
+              <h>NO message Found</h>
+            ) : (
+              message?.map((item, index) => (
+                <ChatBox key={item.id || index} message={item} />
+              ))
+            )}
+            <div ref={messagesEndRef} />
           </div>
           <div>
             <MessageInput />
